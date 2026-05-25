@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>네이버 광고 통합 보고서 2026 3–4월</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#ffffff; --bg2:#f8f9fb; --bg3:#f0f2f5;
+  --border:#e4e7ed; --border2:#d0d5de;
+  --text:#1a1d24; --text2:#5a6278; --text3:#9ba3b8;
+  --accent:#2563eb; --accent2:#7c3aed;
+  --green:#059669; --red:#dc2626; --yellow:#d97706; --orange:#ea580c;
+  --c1:#2563eb; --c2:#7c3aed; --c3:#059669; --c4:#ea580c;
+  --c1l:#eff6ff; --c2l:#f5f3ff; --c3l:#ecfdf5; --c4l:#fff7ed;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f2f5;color:var(--text);font-family:'Pretendard',sans-serif;font-size:13px;line-height:1.6}
+
+/* ── HEADER ── */
+.site-header{background:#fff;border-bottom:1px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:800;flex-shrink:0}
+.site-header h1{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.site-header .sub{font-size:11px;color:var(--text3);margin-top:1px}
+.header-meta{display:flex;gap:20px}
+.meta-item{text-align:right}
+.meta-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
+.meta-val{font-size:12px;font-weight:700;color:var(--text)}
+
+/* ── NAV ── */
+.nav-bar{background:#fff;border-bottom:1px solid var(--border);padding:0 40px;display:flex;gap:0}
+.nav-btn{padding:11px 20px;font-size:12px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;font-family:'Pretendard',sans-serif}
+.nav-btn:hover{color:var(--text2)}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── MAIN ── */
+.main{padding:24px 40px;max-width:1360px}
+.section{display:none}
+.section.active{display:block}
+
+/* ── OVERVIEW: 1페이지 레이아웃 ── */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto;gap:14px}
+.overview-kpi    {grid-column:1/3}
+.overview-charts {grid-column:1/3;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.overview-table  {grid-column:1/2}
+.overview-right  {grid-column:2/3;display:flex;flex-direction:column;gap:14px}
+
+/* ── KPI strip ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--bar-color,var(--accent))}
+.kpi-label{font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.kpi-company{font-size:10px;color:var(--bar-color,var(--accent));font-weight:700;margin-bottom:3px}
+.kpi-value{font-size:22px;font-weight:800;letter-spacing:-1px;color:var(--text);font-family:'DM Mono',monospace}
+.kpi-row{display:flex;align-items:center;gap:8px;margin-top:5px}
+.kpi-delta{font-size:10px;font-weight:700;padding:1px 6px;border-radius:12px}
+.kpi-delta.up{background:#dcfce7;color:var(--green)}
+.kpi-delta.down{background:#fee2e2;color:var(--red)}
+.kpi-sub{font-size:10px;color:var(--text3)}
+
+/* ── PANEL ── */
+.panel{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.panel-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.panel-sub{font-size:10px;color:var(--text3);margin-bottom:12px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);background:var(--bg2)}
+th:first-child{text-align:left}
+td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--text)}
+td:first-child{text-align:left;font-family:'Pretendard',sans-serif;font-size:12px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg2)}
+.badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;font-family:'Pretendard',sans-serif}
+.badge-up{background:#dcfce7;color:var(--green)}
+.badge-down{background:#fee2e2;color:var(--red)}
+.num-up{color:var(--green)}
+.num-down{color:var(--red)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;flex-shrink:0}
+
+/* ── INSIGHT ── */
+.insight-col{display:flex;flex-direction:column;gap:8px}
+.insight-card{border-radius:8px;padding:12px 14px;border-left:3px solid}
+.insight-card.good{background:#f0fdf4;border-color:var(--green)}
+.insight-card.warn{background:#fffbeb;border-color:var(--yellow)}
+.insight-card.risk{background:#fef2f2;border-color:var(--red)}
+.ic-label{font-size:10px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.ic-item{font-size:11px;color:var(--text2);margin-bottom:3px;padding-left:9px;position:relative;line-height:1.45}
+.ic-item::before{content:'·';position:absolute;left:0;color:var(--text3)}
+
+/* ── ACTION ── */
+.action-strip{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px}
+.action-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
+.action-row{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:7px 0;border-bottom:1px solid var(--border)}
+.action-row:last-child{border-bottom:none}
+.action-p{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
+.p1{background:#fee2e2;color:var(--red)}
+.p2{background:#fef9c3;color:var(--yellow)}
+.action-body{font-size:11px}
+.action-title-text{font-weight:700;color:var(--text);margin-bottom:1px}
+.action-basis{color:var(--text3);font-size:10px}
+.action-deadline{font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap;align-self:center}
+
+/* ── PAGE TITLE ── */
+.page-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.page-title::before{content:'';display:block;width:3px;height:18px;background:linear-gradient(180deg,var(--accent),var(--accent2));border-radius:2px}
+.page-sub{color:var(--text3);font-size:11px;margin-bottom:20px}
+
+/* ── POWERLINK / PLACE tabs ── */
+.chart-row{display:grid;gap:14px;margin-bottom:16px}
+.chart-row.col2{grid-template-columns:1fr 1fr}
+
+/* ── KEYWORD ── */
+.company-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.ctab{padding:5px 14px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text2);transition:all .15s;font-family:'Pretendard',sans-serif}
+.ctab[data-c="0"].active{background:var(--c1);border-color:var(--c1);color:#fff}
+.ctab[data-c="1"].active{background:var(--c2);border-color:var(--c2);color:#fff}
+.ctab[data-c="2"].active{background:var(--c3);border-color:var(--c3);color:#fff}
+.ctab[data-c="3"].active{background:var(--c4);border-color:var(--c4);color:#fff}
+
+.kw-list{display:flex;flex-direction:column;gap:5px}
+.kw-row{display:grid;grid-template-columns:20px 130px 1fr 52px 52px 60px;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border-radius:7px;border:1px solid var(--border)}
+.kw-rank{font-size:10px;font-weight:700;color:var(--text3);text-align:center;font-family:'DM Mono',monospace}
+.kw-rank.top{color:var(--yellow)}
+.kw-name{font-size:11px;font-weight:600;color:var(--text)}
+.kw-bar-wrap{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.kw-bar{height:100%;border-radius:3px}
+.kw-num{font-size:11px;font-family:'DM Mono',monospace;text-align:right;color:var(--text2)}
+.kw-delta{font-size:10px;font-weight:600;text-align:right}
+.kw-rnk{font-size:10px;color:var(--text3);text-align:right;font-family:'DM Mono',monospace}
+
+/* ── MAP HIGHLIGHT ── */
+.map-hl{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #a7f3d0;border-radius:10px;padding:14px 18px;margin-bottom:16px}
+.map-hl-title{font-size:12px;font-weight:700;color:var(--green);margin-bottom:10px}
+.map-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.map-stat{text-align:center;padding:10px;background:rgba(255,255,255,.7);border-radius:7px}
+.map-stat-val{font-size:18px;font-weight:800;font-family:'DM Mono',monospace;color:var(--green)}
+.map-stat-label{font-size:10px;color:var(--text3);margin-top:2px}
+.map-stat-sub{font-size:10px;color:var(--text2);margin-top:1px}
+
+footer{margin:32px 40px 20px;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <div class="header-logo">N</div>
+    <div>
+      <h1>네이버 광고 통합 보고서</h1>
+      <div class="sub">파워링크 · 지도광고(플레이스) — 4개사 · 2026년 3월 vs 4월</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-item"><div class="meta-label">작성일</div><div class="meta-val">2026. 05</div></div>
+    <div class="meta-item"><div class="meta-label">대상</div><div class="meta-val">4개사</div></div>
+    <div class="meta-item"><div class="meta-label">기간</div><div class="meta-val">03 – 04월</div></div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <button class="nav-btn active" onclick="showSection('overview',this)">📊 통합 개요</button>
+  <button class="nav-btn" onclick="showSection('powerlink',this)">🔗 파워링크</button>
+  <button class="nav-btn" onclick="showSection('place',this)">📍 지도광고</button>
+  <button class="nav-btn" onclick="showSection('keyword',this)">🔍 키워드</button>
+</nav>
+
+<div class="main">
+
+<!-- ══════════ OVERVIEW (1-page) ══════════ -->
+<div id="sec-overview" class="section active">
+
+  <!-- KPI 4개 -->
+  <div class="kpi-strip" style="margin-bottom:14px">
+    <div class="kpi-card" style="--bar-color:var(--c1)">
+      <div class="kpi-label">파워링크 클릭수 (4월)</div>
+      <div class="kpi-company">상암 월드컵컨벤션</div>
+      <div class="kpi-value">2,240</div>
+      <div class="kpi-row"><span class="kpi-delta down">▼ 16.8%</span><span class="kpi-sub">3월 2,693</span></div>
+    </div>
+    <div class="kpi-card" style="--bar-color:var(--c2)">
+      <div class="kpi-label">파워링크 클릭수 (4월)</div>
+      <div class="kpi-company">부천 MJ컨벤션</div>
+      <div class="kpi-value">386</div>
+      <div class="kpi-row"><span class="kpi-delta up">▲ 40.9%</span><span class="kpi-sub">3월 274</span></div>
+    </div>
+    <div class="kpi-card" style="--bar-color:var(--c3)">
+      <div class="kpi-label">파워링크 클릭수 (4월)</div>
+      <div class="kpi-company">안산 AW컨벤션</div>
+      <div class="kpi-value">260</div>
+      <div class="kpi-row"><span class="kpi-delta up">▲ 29.4%</span><span class="kpi-sub">3월 201</span></div>
+    </div>
+    <div class="kpi-card" style="--bar-color:var(--c4)">
+      <div class="kpi-label">파워링크 클릭수 (4월)</div>
+      <div class="kpi-company">상록아트홀</div>
+      <div class="kpi-value">904</div>
+      <div class="kpi-row"><span class="kpi-delta up">▲ 70.9%</span><span class="kpi-sub">3월 529</span></div>
+    </div>
+  </div>
+
+  <!-- 메인 그리드 -->
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start">
+
+    <!-- 왼쪽: 차트 + 테이블 -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+
+      <!-- 차트 2개 나란히 (작게) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="panel">
+          <div class="panel-title">파워링크 클릭수</div>
+          <div class="panel-sub">3월 vs 4월</div>
+          <canvas id="chartClk" height="130"></canvas>
+        </div>
+        <div class="panel">
+          <div class="panel-title">파워링크 노출수</div>
+          <div class="panel-sub">3월 vs 4월</div>
+          <canvas id="chartImp" height="130"></canvas>
+        </div>
+      </div>
+
+      <!-- 요약 테이블 -->
+      <div class="panel">
+        <div class="panel-title">4사 통합 요약 (파워링크 기준)</div>
+        <div class="panel-sub" style="margin-bottom:8px">3월 vs 4월</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th>업체</th>
+            <th>3월 노출</th><th>4월 노출</th><th>증감</th>
+            <th>3월 클릭</th><th>4월 클릭</th><th>증감</th>
+            <th>3월 광고비</th><th>4월 광고비</th>
+          </tr></thead>
+          <tbody>
+            <tr><td><span class="dot" style="background:var(--c1)"></span>상암 월드컵컨벤션</td><td>3,678,398</td><td>3,244,092</td><td><span class="badge badge-down">-11.8%</span></td><td>2,693</td><td>2,240</td><td><span class="badge badge-down">-16.8%</span></td><td>2,425,718</td><td>2,387,005</td></tr>
+            <tr><td><span class="dot" style="background:var(--c2)"></span>부천 MJ컨벤션</td><td>249,276</td><td>354,042</td><td><span class="badge badge-up">+42.1%</span></td><td>274</td><td>386</td><td><span class="badge badge-up">+40.9%</span></td><td>667,436</td><td>881,056</td></tr>
+            <tr><td><span class="dot" style="background:var(--c3)"></span>안산 AW컨벤션</td><td>476,650</td><td>503,921</td><td><span class="badge badge-up">+5.7%</span></td><td>201</td><td>260</td><td><span class="badge badge-up">+29.4%</span></td><td>846,604</td><td>799,964</td></tr>
+            <tr><td><span class="dot" style="background:var(--c4)"></span>상록아트홀</td><td>124,717</td><td>162,901</td><td><span class="badge badge-up">+30.6%</span></td><td>529</td><td>904</td><td><span class="badge badge-up">+70.9%</span></td><td>1,009,613</td><td>968,080</td></tr>
+            <tr style="background:var(--bg3)"><td><strong>4사 합산</strong></td><td><strong>4,529,041</strong></td><td><strong>4,264,956</strong></td><td><span class="badge badge-down">-5.8%</span></td><td><strong>3,697</strong></td><td><strong>3,790</strong></td><td><span class="badge badge-up">+2.5%</span></td><td><strong>4,949,371</strong></td><td><strong>5,036,105</strong></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 인사이트 + 액션 -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="panel" style="padding:14px 16px">
+        <div class="panel-title" style="margin-bottom:10px">인사이트</div>
+        <div class="insight-col">
+          <div class="insight-card good">
+            <div class="ic-label">✅ 잘된 점</div>
+            <div class="ic-item">상록아트홀 클릭 +70.9% — 4사 최대 성장</div>
+            <div class="ic-item">MJ·AW 노출·클릭 동반 상승 (MJ +42%, AW +29%)</div>
+            <div class="ic-item">4사 합산 클릭 +2.5% — 상암 감소를 3사가 커버</div>
+          </div>
+          <div class="insight-card warn">
+            <div class="ic-label">⚠️ 개선 필요</div>
+            <div class="ic-item">상암 관악웨딩홀: 노출 1위인데 클릭 -25.4%</div>
+            <div class="ic-item">MJ컨벤션 직접 키워드 순위 2.0→2.4 하락</div>
+            <div class="ic-item">상록 서울웨딩홀추천: 클릭 25→14, 순위 1.2→2.1</div>
+          </div>
+          <div class="insight-card risk">
+            <div class="ic-label">🔴 이슈</div>
+            <div class="ic-item">상암 서울웨딩홀 4월 비용 831K (+116K, 클릭 +4회)</div>
+            <div class="ic-item">저효율 키워드: 화성·하우스·목동·웨딩홀후기 2개월 클릭 0~1회</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-strip">
+        <div class="action-title">💡 5월 액션 플랜</div>
+        <div class="action-row">
+          <div class="action-p p1">1</div>
+          <div class="action-body">
+            <div class="action-title-text">MJ컨벤션 키워드 입찰가 점검</div>
+            <div class="action-basis">부천 MJ · 직접 키워드 순위 2.0→2.4 하락</div>
+          </div>
+          <div class="action-deadline">즉시</div>
+        </div>
+        <div class="action-row">
+          <div class="action-p p2">2</div>
+          <div class="action-body">
+            <div class="action-title-text">저효율 키워드 예산 감축 또는 중단</div>
+            <div class="action-basis">상암·AW · 2개월 연속 클릭 0~1회</div>
+          </div>
+          <div class="action-deadline">이번 달</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ POWERLINK ══════════ -->
+<div id="sec-powerlink" class="section">
+  <div class="page-title">파워링크 광고 비교</div>
+  <div class="page-sub">4개 업체 파워링크 월별 노출·클릭·비용 비교</div>
+
+  <div class="chart-row col2">
+    <div class="panel">
+      <div class="panel-title">클릭수 증감률</div>
+      <div class="panel-sub">3월 대비 4월 변화율(%)</div>
+      <canvas id="chartPlDelta" height="180"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">월별 클릭수 추이</div>
+      <div class="panel-sub">업체별 3→4월</div>
+      <canvas id="chartPlLine" height="180"></canvas>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">파워링크 상세 수치</div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>업체</th><th>3월 노출</th><th>4월 노출</th><th>증감률</th><th>3월 클릭</th><th>4월 클릭</th><th>증감률</th><th>3월 비용</th><th>4월 비용</th><th>비용 증감</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot" style="background:var(--c1)"></span>상암 월드컵컨벤션</td><td>3,678,398</td><td>3,244,092</td><td class="num-down">-11.8%</td><td>2,693</td><td>2,240</td><td class="num-down">-16.8%</td><td>2,425,718</td><td>2,387,005</td><td class="num-up">-1.6%</td></tr>
+        <tr><td><span class="dot" style="background:var(--c2)"></span>부천 MJ컨벤션</td><td>249,276</td><td>354,042</td><td class="num-up">+42.1%</td><td>274</td><td>386</td><td class="num-up">+40.9%</td><td>667,436</td><td>881,056</td><td class="num-down">+32.0%</td></tr>
+        <tr><td><span class="dot" style="background:var(--c3)"></span>안산 AW컨벤션</td><td>476,650</td><td>503,921</td><td class="num-up">+5.7%</td><td>201</td><td>260</td><td class="num-up">+29.4%</td><td>846,604</td><td>799,964</td><td class="num-up">-5.5%</td></tr>
+        <tr><td><span class="dot" style="background:var(--c4)"></span>상록아트홀</td><td>124,717</td><td>162,901</td><td class="num-up">+30.6%</td><td>529</td><td>904</td><td class="num-up">+70.9%</td><td>1,009,613</td><td>968,080</td><td class="num-up">-4.1%</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══════════ PLACE ══════════ -->
+<div id="sec-place" class="section">
+  <div class="page-title">지도광고(플레이스) 현황</div>
+  <div class="page-sub">저비용 고효율 채널 — 파워링크 대비 비용 비교</div>
+
+  <div class="map-hl">
+    <div class="map-hl-title">📍 지도광고 효율 요약</div>
+    <div class="map-stat-row">
+      <div class="map-stat"><div class="map-stat-val">55원</div><div class="map-stat-label">클릭당 비용</div><div class="map-stat-sub">3사 공통 단가</div></div>
+      <div class="map-stat"><div class="map-stat-val">1,554회</div><div class="map-stat-label">3사 합산 클릭 (4월)</div><div class="map-stat-sub">상암 382 · MJ 547 · 상록 625</div></div>
+      <div class="map-stat"><div class="map-stat-val">63,745원</div><div class="map-stat-label">3사 합산 비용 (4월)</div><div class="map-stat-sub">파워링크의 약 1.3%</div></div>
+      <div class="map-stat" style="background:rgba(5,150,105,.08)"><div class="map-stat-val" style="color:var(--yellow)">🏆 1위</div><div class="map-stat-label">안산 AW컨벤션</div><div class="map-stat-sub">지도 자연 1위 · 유료 미집행</div></div>
+    </div>
+  </div>
+
+  <div class="chart-row col2">
+    <div class="panel">
+      <div class="panel-title">지도광고 클릭수 — 3월 vs 4월</div>
+      <div class="panel-sub">안산 AW 미집행</div>
+      <canvas id="chartMapClk" height="180"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">지도광고 vs 파워링크 비용 (4월)</div>
+      <div class="panel-sub">단위: 원</div>
+      <canvas id="chartCostCompare" height="180"></canvas>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">지도광고 상세</div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>업체</th><th>3월 노출</th><th>4월 노출</th><th>증감</th><th>3월 클릭</th><th>4월 클릭</th><th>증감</th><th>3월 비용</th><th>4월 비용</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot" style="background:var(--c1)"></span>상암 월드컵컨벤션</td><td>2,891</td><td>3,495</td><td class="num-up">+20.9%</td><td>343</td><td>382</td><td class="num-up">+11.4%</td><td>18,865</td><td>21,010</td><td>—</td></tr>
+        <tr><td><span class="dot" style="background:var(--c2)"></span>부천 MJ컨벤션</td><td>4,789</td><td>3,604</td><td class="num-down">-24.7%</td><td>735</td><td>547</td><td class="num-down">-25.6%</td><td>40,425</td><td>30,085</td><td>—</td></tr>
+        <tr><td><span class="dot" style="background:var(--c3)"></span>안산 AW컨벤션</td><td colspan="7" style="text-align:center;color:var(--text3)">지도 자연 1위 유지 중 · 유료 미집행</td><td>0</td><td><span class="badge badge-up">1위</span></td></tr>
+        <tr><td><span class="dot" style="background:var(--c4)"></span>상록아트홀</td><td>19,223</td><td>15,611</td><td class="num-down">-18.8%</td><td>785</td><td>625</td><td class="num-down">-20.4%</td><td>43,175</td><td>34,375</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══════════ KEYWORD ══════════ -->
+<div id="sec-keyword" class="section">
+  <div class="page-title">키워드 분석</div>
+  <div class="page-sub">파워링크 키워드 — 4월 클릭수 기준 순위</div>
+
+  <div class="company-tabs" id="kwTabs">
+    <button class="ctab active" data-c="0" onclick="showKw(0)">상암 월드컵컨벤션</button>
+    <button class="ctab" data-c="1" onclick="showKw(1)">부천 MJ컨벤션</button>
+    <button class="ctab" data-c="2" onclick="showKw(2)">안산 AW컨벤션</button>
+    <button class="ctab" data-c="3" onclick="showKw(3)">상록아트홀</button>
+  </div>
+
+  <div class="panel">
+    <div style="display:grid;grid-template-columns:20px 130px 1fr 52px 52px 60px;gap:10px;padding:4px 12px;margin-bottom:4px">
+      <div style="font-size:9px;color:var(--text3)">#</div>
+      <div style="font-size:9px;color:var(--text3)">키워드</div>
+      <div style="font-size:9px;color:var(--text3)">4월 클릭 비중</div>
+      <div style="font-size:9px;color:var(--text3);text-align:right">4월</div>
+      <div style="font-size:9px;color:var(--text3);text-align:right">증감</div>
+      <div style="font-size:9px;color:var(--text3);text-align:right">순위</div>
+    </div>
+    <div class="kw-list" id="kwList"></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<footer>
+  <div>네이버 광고 통합 보고서 · 2026년 3–4월 · 4개사</div>
+  <div>데이터: 네이버 검색광고 계정 보고서 (파워링크 + 플레이스)</div>
+</footer>
+
+<script>
+const companies = ['상암 월드컵컨벤션','부천 MJ컨벤션','안산 AW컨벤션','상록아트홀'];
+const colors    = ['#2563eb','#7c3aed','#059669','#ea580c'];
+const colors20  = ['rgba(37,99,235,.15)','rgba(124,58,237,.15)','rgba(5,150,105,.15)','rgba(234,88,12,.15)'];
+
+Chart.defaults.color = '#9ba3b8';
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.font.size = 10;
+const G = { color:'rgba(0,0,0,.05)', drawBorder:false };
+const T = { color:'#9ba3b8' };
+
+// Overview charts
+new Chart('chartClk',{type:'bar',data:{
+  labels:companies.map(c=>c.replace(' ','\n')),
+  datasets:[
+    {label:'3월',data:[2693,274,201,529],backgroundColor:colors20,borderColor:colors,borderWidth:1.5},
+    {label:'4월',data:[2240,386,260,904],backgroundColor:colors,borderColor:colors,borderWidth:1.5}
+  ]},options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:10,font:{size:10}}}},
+  scales:{x:{grid:G,ticks:{...T,font:{size:9}}},y:{grid:G,ticks:T,beginAtZero:true}}}
+});
+new Chart('chartImp',{type:'bar',data:{
+  labels:companies.map(c=>c.replace(' ','\n')),
+  datasets:[
+    {label:'3월',data:[3678398,249276,476650,124717],backgroundColor:colors20,borderColor:colors,borderWidth:1.5},
+    {label:'4월',data:[3244092,354042,503921,162901],backgroundColor:colors,borderColor:colors,borderWidth:1.5}
+  ]},options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:10,font:{size:10}}}},
+  scales:{x:{grid:G,ticks:{...T,font:{size:9}}},y:{grid:G,ticks:T,beginAtZero:true}}}
+});
+
+// Powerlink charts
+new Chart('chartPlDelta',{type:'bar',
+  data:{labels:companies,datasets:[{
+    label:'클릭수 증감률(%)',
+    data:[-16.8,40.9,29.4,70.9],
+    backgroundColor:[-16.8,40.9,29.4,70.9].map(v=>v>=0?'rgba(5,150,105,.7)':'rgba(220,38,38,.7)'),
+    borderRadius:4
+  }]},
+  options:{responsive:true,plugins:{legend:{display:false}},
+  scales:{x:{grid:G,ticks:T},y:{grid:G,ticks:{...T,callback:v=>v+'%'}}}}
+});
+new Chart('chartPlLine',{type:'line',
+  data:{labels:['3월','4월'],datasets:companies.map((c,i)=>({
+    label:c,
+    data:[[2693,274,201,529][i],[2240,386,260,904][i]],
+    borderColor:colors[i],backgroundColor:colors20[i],
+    borderWidth:2,pointRadius:4,tension:.3,fill:false
+  }))},
+  options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8,font:{size:10}}}},
+  scales:{x:{grid:G,ticks:T},y:{grid:G,ticks:T,beginAtZero:false}}}
+});
+
+// Place charts
+new Chart('chartMapClk',{type:'bar',
+  data:{labels:['상암','MJ','상록'],datasets:[
+    {label:'3월',data:[343,735,785],backgroundColor:['rgba(37,99,235,.15)','rgba(124,58,237,.15)','rgba(234,88,12,.15)'],borderColor:['#2563eb','#7c3aed','#ea580c'],borderWidth:1.5},
+    {label:'4월',data:[382,547,625],backgroundColor:['#2563eb','#7c3aed','#ea580c'],borderColor:['#2563eb','#7c3aed','#ea580c'],borderWidth:1.5}
+  ]},options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8,font:{size:10}}}},
+  scales:{x:{grid:G,ticks:T},y:{grid:G,ticks:T,beginAtZero:true}}}
+});
+new Chart('chartCostCompare',{type:'bar',
+  data:{labels:['상암','MJ','상록'],datasets:[
+    {label:'파워링크',data:[2387005,881056,968080],backgroundColor:['rgba(37,99,235,.5)','rgba(124,58,237,.5)','rgba(234,88,12,.5)'],borderColor:['#2563eb','#7c3aed','#ea580c'],borderWidth:1.5},
+    {label:'지도광고',data:[21010,30085,34375],backgroundColor:'rgba(5,150,105,.7)',borderColor:'#059669',borderWidth:1.5}
+  ]},options:{responsive:true,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:8,font:{size:10}}}},
+  scales:{x:{grid:G,ticks:T},y:{grid:G,ticks:T,beginAtZero:true}}}
+});
+
+// Keyword
+const kwData = {
+  '상암 월드컵컨벤션':{color:'#2563eb',kw:[
+    {k:'관악웨딩홀',c3:555,c4:414,rnk3:1.5,rnk4:1.5},{k:'서울웨딩홀',c3:370,c4:374,rnk3:1.5,rnk4:1.5},
+    {k:'서울예식장',c3:348,c4:297,rnk3:1.5,rnk4:1.5},{k:'파주웨딩홀',c3:153,c4:131,rnk3:1.5,rnk4:1.5},
+    {k:'일산웨딩홀',c3:103,c4:104,rnk3:1.5,rnk4:1.4},{k:'영등포웨딩홀',c3:120,c4:93,rnk3:1.5,rnk4:1.5},
+    {k:'김포웨딩홀',c3:102,c4:89,rnk3:1.7,rnk4:1.8},{k:'서울웨딩홀추천',c3:14,c4:24,rnk3:1.6,rnk4:1.5},
+    {k:'여의도웨딩홀',c3:17,c4:13,rnk3:1.6,rnk4:1.4},{k:'신도림웨딩홀',c3:23,c4:10,rnk3:1.8,rnk4:1.8},
+  ]},
+  '부천 MJ컨벤션':{color:'#7c3aed',kw:[
+    {k:'MJ컨벤션',c3:90,c4:88,rnk3:2.0,rnk4:2.4},{k:'구로웨딩홀',c3:26,c4:46,rnk3:1.4,rnk4:1.4},
+    {k:'시흥웨딩홀',c3:28,c4:43,rnk3:1.6,rnk4:1.6},{k:'김포웨딩홀',c3:21,c4:34,rnk3:1.4,rnk4:1.4},
+    {k:'광명웨딩홀',c3:25,c4:29,rnk3:1.6,rnk4:1.5},{k:'인천웨딩홀',c3:31,c4:29,rnk3:1.4,rnk4:1.8},
+    {k:'신도림웨딩홀',c3:2,c4:7,rnk3:1.5,rnk4:1.6},
+  ]},
+  '안산 AW컨벤션':{color:'#059669',kw:[
+    {k:'수원웨딩홀',c3:45,c4:56,rnk3:1.3,rnk4:1.4},{k:'시흥웨딩홀',c3:48,c4:51,rnk3:1.4,rnk4:1.4},
+    {k:'안양웨딩홀',c3:36,c4:40,rnk3:1.4,rnk4:1.4},{k:'광명웨딩홀',c3:26,c4:39,rnk3:1.4,rnk4:1.4},
+    {k:'인천웨딩홀',c3:21,c4:30,rnk3:1.4,rnk4:1.4},{k:'화성웨딩홀',c3:1,c4:0,rnk3:1.2,rnk4:1.0},
+  ]},
+  '상록아트홀':{color:'#ea580c',kw:[
+    {k:'서울예식장',c3:92,c4:103,rnk3:1.4,rnk4:1.4},{k:'서울웨딩홀추천',c3:25,c4:14,rnk3:1.2,rnk4:2.1},
+    {k:'웨딩홀추천',c3:14,c4:10,rnk3:1.8,rnk4:1.7},{k:'하우스웨딩홀',c3:9,c4:5,rnk3:1.2,rnk4:1.4},
+    {k:'서울강남웨딩홀',c3:0,c4:3,rnk3:1.1,rnk4:1.1},{k:'컨벤션웨딩홀',c3:3,c4:1,rnk3:1.8,rnk4:1.3},
+  ]}
+};
+
+function showKw(idx) {
+  document.querySelectorAll('#kwTabs .ctab').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  const c = companies[idx];
+  const {color, kw} = kwData[c];
+  const sorted = [...kw].sort((a,b)=>b.c4-a.c4);
+  const maxClk = Math.max(...sorted.map(r=>r.c4), 1);
+  document.getElementById('kwList').innerHTML = sorted.map((r,i)=>{
+    const dc = r.c4 - r.c3;
+    const dcStr = dc>0?`<span class="num-up">+${dc}</span>`:dc<0?`<span class="num-down">${dc}</span>`:`<span style="color:var(--text3)">0</span>`;
+    const dRnk = parseFloat((r.rnk4-r.rnk3).toFixed(1));
+    const rnkStr = dRnk>0?`<span class="num-down">${r.rnk4}▲</span>`:dRnk<0?`<span class="num-up">${r.rnk4}▼</span>`:`<span style="color:var(--text3)">${r.rnk4}</span>`;
+    const barW = Math.round((r.c4/maxClk)*100);
+    return `<div class="kw-row">
+      <div class="kw-rank ${i<3?'top':''}">${i+1}</div>
+      <div class="kw-name">${r.k}</div>
+      <div class="kw-bar-wrap"><div class="kw-bar" style="width:${barW}%;background:${color}"></div></div>
+      <div class="kw-num">${r.c4}</div>
+      <div class="kw-delta">${dcStr}</div>
+      <div class="kw-rnk">${rnkStr}</div>
+    </div>`;
+  }).join('');
+}
+showKw(0);
+
+function showSection(key, btn) {
+  const secs = {overview:'sec-overview',powerlink:'sec-powerlink',place:'sec-place',keyword:'sec-keyword'};
+  Object.values(secs).forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(secs[key]).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
